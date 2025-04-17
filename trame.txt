@@ -1,0 +1,218 @@
+Le projet **Philosophers** de l'école 42 est une introduction aux concepts
+de **concurrence** et de **synchronisation** dans la programmation en C,
+en utilisant des **threads** et des **mutexes**.
+
+---
+
+### Résumé des consignes
+
+Le projet **Philosophers** simule un problème classique d'informatique : le **problème des philosophes dineurs**.
+Voici les points clés :
+
+1. **Contexte** :
+   - Des philosophes (nombre donné en argument) sont assis autour d'une table ronde avec un bol de spaghettis au centre.
+   - Il y a autant de fourchettes que de philosophes, une entre chaque paire de philosophes.
+   - Les philosophes alternent entre **manger**, **penser** et **dormir**.
+   Pour manger, un philosophe doit prendre **deux fourchettes** (celle à sa gauche et celle à sa droite).
+
+2. **Arguments du programme** :
+   - `number_of_philosophers` : Nombre de philosophes (et de fourchettes).
+   - `time_to_die` : Temps (en ms) avant qu’un philosophe ne meure s’il n’a pas mangé.
+   - `time_to_eat` : Temps (en ms) qu’un philosophe passe à manger (en tenant deux fourchettes).
+   - `time_to_sleep` : Temps (en ms) qu’un philosophe passe à dormir.
+   - `[number_of_times_each_philosopher_must_eat]` (optionnel) : Nb de repas nécessaires pour arrêter la simulation.
+
+3. **Règles** :
+   - Chaque philosophe est un **thread** distinct.
+   - Les fourchettes sont partagées et protégées par des **mutexes** pour éviter les conflits d’accès.
+   - Les philosophes ne communiquent pas entre eux et ne savent pas si un autre est sur le point de mourir.
+   - La simulation s’arrête si un philosophe meurt (de faim)
+   	 ou si tous ont mangé le nombre de repas requis (si spécifié).
+   - Les changements d’état (prend une fourchette, mange, dort, pense, meurt)
+   	 doivent être affichés avec un **timestamp** (en ms) et sans chevauchement de messages.
+   - La mort d’un philosophe doit être annoncée dans les **10 ms** suivant son décès.
+   - Pas de **data races** (accès concurrents non protégés aux ressources partagées).
+
+4. **Contraintes techniques** :
+   - Langage : C, conforme à la Norme 42.
+   - Pas de variables globales.
+   - Gestion propre de la mémoire (pas de fuites).
+   - Utilisation des fonctions autorisées :
+   	`memset`, `printf`, `malloc`, `free`, `write`, `usleep`, `gettimeofday`, `pthread_create`,
+	`pthread_detach`, `pthread_join`, `pthread_mutex_init`, `pthread_mutex_destroy`, `pthread_mutex_lock`,
+	`pthread_mutex_unlock`.
+   - Makefile avec règles standard (`NAME`, `all`, `clean`, `fclean`, `re`).
+
+5. **Objectif** :
+   - Écrire un programme (`philo`) qui simule les philosophes en évitant qu’ils meurent de faim,
+   	 tout en gérant la concurrence pour les fourchettes.
+
+---
+
+### Nouvelles notions par rapport aux projets précédents
+
+Les projets précédents (libft, born2beroot, ft_printf, get_next_line, push_swap, so_long, minitalk)
+ont introduit à des concepts comme :
+	- la manipulation de mémoire
+	- les entrées/sorties
+	- les structures de données
+	- les algorithmes
+	- la communication inter-processus.
+
+**Philosophers** introduit des notions de **programmation concurrente** qui sont nouvelles.
+Voici une comparaison et les nouveautés :
+
+#### 1. **Programmation concurrente avec threads**
+
+   - **Projets précédents** :
+     - Aucun projet n’utilisait de **threads**. Les programmes étaient **séquentiels** (une seule tâche à la fois).
+     - Dans **minitalk**, tu as utilisé des **processus** (via `fork` ou signaux),
+	   mais les processus sont indépendants et ne partagent pas la mémoire.
+
+   - **Philosophers** :
+     - Chaque philosophe est un **thread** (créé avec `pthread_create`).
+	   Les threads s’exécutent **simultanément** dans le même processus et partagent la même mémoire.
+     - Tu dois gérer la **concurrence** : plusieurs threads accèdent aux mêmes ressources
+	   (fourchettes, logs, état de la simulation).
+     - Nouvelles fonctions utilisées :
+=>     - `pthread_create` : Crée un thread.
+=>     - `pthread_join` : Attend la fin d’un thread.
+=>     - `pthread_detach` : Permet à un thread de se libérer automatiquement à la fin.
+
+     - **Défi** : Synchroniser les threads pour éviter des comportements imprévisibles
+		(ex. : plusieurs philosophes prenant la même fourchette).
+
+#### 2. **Synchronisation avec mutexes**
+
+   - **Projets précédents** :
+     - Aucun projet n’a requis de gérer des **ressources partagées** entre plusieurs entités exécutées simultanément.
+     - Les projets comme **push_swap** ou **so_long** étaient mono-thread et n’avaient pas besoin de synchronisation.
+
+   - **Philosophers** :
+     - Les fourchettes sont des ressources partagées.
+	   Pour éviter que plusieurs philosophes prennent la même fourchette en même temps,
+=>	   tu dois utiliser des **mutexes** (verrous).
+=>   - Un **mutex** (mutual exclusion) garantit qu’un seul thread peut accéder à une ressource à la fois.
+     - Nouvelles fonctions :
+=>     - `pthread_mutex_init` : Initialise un mutex.
+=>     - `pthread_mutex_lock` : Verrouille un mutex (attend si déjà verrouillé).
+=>     - `pthread_mutex_unlock` : Déverrouille un mutex.
+=>     - `pthread_mutex_destroy` : Libère un mutex.
+
+     - **Défi** : Protéger chaque fourchette avec un mutex et gérer l’affichage des logs pour éviter les chevauchements
+	  (ex. : plusieurs threads écrivant sur `stdout` simultanément).
+
+#### 3. **Gestion du temps et des temporisations**
+
+   - **Projets précédents** :
+     - Les projets comme **get_next_line** ou **ft_printf** n’avaient pas de contraintes temporelles explicites.
+     - **minitalk** utilisait des signaux, mais sans gestion précise du temps en millisecondes.
+
+   - **Philosophers** :
+     - Tu dois gérer des temporisations précises (en millisecondes) pour :
+       - Vérifier si un philosophe dépasse `time_to_die` sans manger.
+       - Simuler les durées de `time_to_eat` et `time_to_sleep`.
+=>   - Nouvelle fonction : `gettimeofday` pour obtenir un timestamp précis en millisecondes.
+
+     - **Défi** : Calculer les intervalles de temps correctement et arrêter la simulation dès qu’un philosophe meurt,
+	   tout en respectant la contrainte des 10 ms pour afficher la mort.
+
+#### 4. **Éviter les data races**
+   - **Projets précédents** :
+     - Aucun projet n’avait de risque de **data races**, car ils étaient mono-thread ou utilisaient des processus indépendants.
+   - **Philosophers** :
+     - Une **data race** survient quand plusieurs threads accèdent à une ressource partagée (ex. : une variable ou une fourchette) sans synchronisation, entraînant des comportements imprévisibles.
+     - Tu dois utiliser des mutexes pour protéger :
+       - L’accès aux fourchettes.
+       - L’affichage des messages (pour éviter que les logs se mélangent).
+       - Les variables partagées (ex. : état de la simulation ou compteur de repas).
+     - **Défi** : Identifier toutes les ressources partagées et les protéger correctement.
+
+#### 5. **Problème des philosophes dineurs**
+   - **Projets précédents** :
+     - Les projets comme **push_swap** ou **so_long** impliquaient des algorithmes ou des simulations, mais sans concurrence.
+   - **Philosophers** :
+     - Ce projet est une implémentation du **problème des philosophes dineurs**, un problème classique en informatique pour étudier la synchronisation et éviter :
+       - **Deadlock** : Tous les philosophes prennent une fourchette et attendent l’autre, bloquant la simulation.
+       - **Starvation** : Un philosophe ne peut jamais manger (ex. : bloqué par ses voisins).
+     - **Défi** : Concevoir une stratégie pour que les philosophes mangent sans mourir, par exemple en imposant un ordre pour prendre les fourchettes (ex. : toujours prendre la fourchette de gauche d’abord) ou en limitant le nombre de philosophes mangeant simultanément.
+
+#### 6. **Gestion des threads et terminaison propre**
+   - **Projets précédents** :
+     - Les projets se terminaient simplement en libérant la mémoire et en quittant.
+   - **Philosophers** :
+     - Tu dois gérer la **création**, l’**exécution** et la **terminaison** de plusieurs threads.
+     - À la fin de la simulation (mort d’un philosophe ou repas complets), tu dois :
+       - Arrêter tous les threads proprement (souvent via `pthread_join` ou `pthread_detach`).
+       - Libérer les mutexes avec `pthread_mutex_destroy`.
+       - Libérer toute mémoire allouée.
+     - **Défi** : S’assurer que la simulation s’arrête immédiatement après une mort et que toutes les ressources sont libérées.
+
+---
+
+### Conseils pour aborder le projet
+
+1. **Comprendre la structure** :
+   - Crée une structure pour stocker les données globales (arguments, mutexes, état de la simulation).
+   - Crée une structure par philosophe (avec son numéro, ses fourchettes, son dernier repas, etc.).
+
+2. **Découper le problème** :
+   - **Parsing** : Vérifie et stocke les arguments.
+   - **Initialisation** : Crée les mutexes pour les fourchettes et les logs, alloue les philosophes.
+   - **Simulation** :
+     - Lance un thread par philosophe avec une routine (manger, dormir, penser).
+     - Lance un thread ou une boucle pour surveiller les morts (vérifier `time_to_die`).
+   - **Terminaison** : Arrête les threads, libère les mutexes et la mémoire.
+
+3. **Gérer la synchronisation** :
+   - Utilise un mutex par fourchette.
+   - Protège l’affichage des logs avec un mutex global.
+   - Vérifie régulièrement si un philosophe est mort dans un thread de supervision.
+
+4. **Éviter les problèmes classiques** :
+   - **Deadlock** : Fais prendre les fourchettes dans un ordre cohérent (ex. : fourchette avec l’index le plus bas en premier).
+   - **Starvation** : Assure que tous les philosophes ont une chance de manger (ex. : alterne les philosophes pairs/impairs).
+   - **Précision temporelle** : Utilise `usleep` avec des boucles pour des temporisations précises.
+
+5. **Tester rigoureusement** :
+   - Teste avec différents nombres de philosophes (1, 2, 5, 100).
+   - Teste des cas limites (ex. : `time_to_die` très court).
+   - Utilise des outils comme `valgrind` pour vérifier les fuites mémoire et `helgrind` pour détecter les data races.
+
+---
+
+### Exemple de flux pour un philosophe
+
+1. **Démarre** : Vérifie si la simulation est active.
+2. **Prend les fourchettes** :
+   - Verrouille le mutex de la fourchette gauche.
+   - Affiche « X has taken a fork ».
+   - Verrouille le mutex de la fourchette droite.
+   - Affiche « X has taken a fork ».
+3. **Mange** :
+   - Affiche « X is eating ».
+   - Met à jour le timestamp du dernier repas.
+   - Attend `time_to_eat` millisecondes.
+4. **Repose les fourchettes** :
+   - Déverrouille les mutexes des fourchettes.
+5. **Dort** :
+   - Affiche « X is sleeping ».
+   - Attend `time_to_sleep` millisecondes.
+6. **Pense** :
+   - Affiche « X is thinking ».
+7. **Recommence** jusqu’à la fin de la simulation.
+
+---
+
+### Ressources utiles
+
+- **Documentation POSIX threads** : Lis les pages man de `pthread_create`, `pthread_mutex_lock`, etc.
+- **Problème des philosophes dineurs** : Recherche des explications sur ce problème classique (ex. : sur Wikipedia ou des cours d’informatique).
+- **Outils de débogage** :
+  - `valgrind --tool=helgrind` pour détecter les data races.
+  - `strace` pour suivre les appels système.
+- **Testeurs 42** : Cherche des testeurs open-source pour Philosophers sur GitHub.
+
+---
+
+Si tu as des questions spécifiques sur une partie du projet (parsing, threads, mutexes, etc.), n’hésite pas à demander ! Bonne chance pour ton cercle et ce projet, c’est un beau défi qui te fera progresser en concurrence. 😊
