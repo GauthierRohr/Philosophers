@@ -6,7 +6,7 @@
 /*   By: grohr <grohr@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 18:59:29 by grohr             #+#    #+#             */
-/*   Updated: 2025/04/18 19:13:55 by grohr            ###   ########.fr       */
+/*   Updated: 2025/04/18 20:52:56 by grohr            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,26 +47,26 @@ typedef struct s_data
 	long			start_time;
 }					t_data;
 
-/* 1_init.c */
+// 1_init.c
 int		init_mutexes(t_data *data);
 int		init_philos(t_data *data);
 int		init_parse_args(int argc, char **argv, t_data *data);
 
-/* 2_threads.c */
+// 2_threads.c
 void	join_threads(t_data *data, pthread_t supervisor);
 int		create_threads(t_data *data, pthread_t *supervisor);
 
-/* routine.c */
+// routine.c
 void	*philo_routine(void *arg);
 void	take_forks(t_philo *philo);
 void	eat(t_philo *philo);
 
-/* supervisor.c */
+// supervisor.c
 void	*supervisor_routine(void *arg);
 int		check_death(t_data *data, int i);
 int		check_all_ate(t_data *data);
 
-/* utils.c */
+// utils.c
 long	get_time(void);
 void	print_log(t_philo *philo, char *msg);
 void	precise_sleep(long ms);
