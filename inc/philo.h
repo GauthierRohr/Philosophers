@@ -6,7 +6,7 @@
 /*   By: grohr <grohr@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 18:59:29 by grohr             #+#    #+#             */
-/*   Updated: 2025/04/18 20:52:56 by grohr            ###   ########.fr       */
+/*   Updated: 2025/04/18 21:27:31 by grohr            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,6 @@
 # include <pthread.h>
 # include <unistd.h>
 # include <sys/time.h>
-
-typedef struct s_data	t_data;
 
 typedef struct s_philo
 {

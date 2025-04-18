@@ -1,21 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.c                                            :+:      :+:    :+:   */
+/*   5_utils.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: grohr <grohr@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 18:48:58 by grohr             #+#    #+#             */
-/*   Updated: 2025/04/18 19:07:50 by grohr            ###   ########.fr       */
+/*   Updated: 2025/04/18 21:50:59 by grohr            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/philo.h"
 
 //get_time:
-//- Récupère le temps actuel en millisecondes avec gettimeofday.
-//- gettimeofday fournit heure (microseconde) pour suivre les timestamps
-//- Retourne le temps en millisecondes.
+//- Récupère le temps actuel
+//- gettimeofday fournit le temps passe en :
+//	 	-en secondes;
+//		- + les restes de micro secs ecoulees;
+// On converti le temps en MILLIsecondes (ce que l'enonce nous demandait quoi)
 //
 long	get_time(void)
 {

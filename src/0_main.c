@@ -6,7 +6,7 @@
 /*   By: grohr <grohr@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 18:48:50 by grohr             #+#    #+#             */
-/*   Updated: 2025/04/18 19:13:27 by grohr            ###   ########.fr       */
+/*   Updated: 2025/04/18 22:24:46 by grohr            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,22 +34,18 @@ static void	clean_up(t_data *data)
 	free(data->philos);
 }
 
-//main:
-//- Parse les arguments
-//- Initialise les données
-//- Lance la simulation.
-//- Gère les erreurs
-//- Nettoie les ressources à la fin.
-//
 int	main(int argc, char **argv)
 {
 	t_data		data;
 	pthread_t	supervisor;
 
+	//easy
 	if (!init_parse_args(argc, argv, &data))
 		return (printf("Invalid arguments\n"), 1);
 	data.simulation_stop = 0;
+	//ok->repasser vite fait sur les notes
 	data.start_time = get_time();
+	//ok-> essayer d'approfondir init_mutexes
 	if (!init_mutexes(&data) || !init_philos(&data))
 		return (printf("Initialization failed\n"), 1);
 	if (!create_threads(&data, &supervisor))
