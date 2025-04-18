@@ -6,7 +6,7 @@
 /*   By: grohr <grohr@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 19:11:28 by grohr             #+#    #+#             */
-/*   Updated: 2025/04/18 19:11:45 by grohr            ###   ########.fr       */
+/*   Updated: 2025/04/18 23:30:45 by grohr            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,9 @@ void	join_threads(t_data *data, pthread_t supervisor)
 //  dans un nouveau thread :
 //			=> permet l'exécution parallèle des philosophes.
 //- Retourne 0 en cas d'erreur, 1 sinon.
+//
+// "Crée un new thread qui exécutera philo_routine avec comme arg &data->philos[i]
+// (l'adresse du i-ème philo), et stocke son id dans data->philos[i].thread"
 //
 int	create_threads(t_data *data, pthread_t *supervisor)
 {

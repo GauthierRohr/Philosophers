@@ -137,3 +137,26 @@ data->forks[i] est le mutex (type pthread_mutex_t à l'index i
 L'assignation fait que left_fork pointe vers ce mutex
 
 #endif
+
+(6)pthread_create(&data->philos[i].thread, NULL, philo_routine, &data->philos[i])
+
+#if 0
+
+/* Create a new thread, starting with execution of START-ROUTINE getting passed ARG.
+Creation attributed come from ATTR. 
+The new handle is stored in *NEWTHREAD.  */
+extern int pthread_create
+        (pthread_t *__restrict __newthread,
+			   const pthread_attr_t *__restrict __attr,
+			   void *(*__start_routine) (void *),
+			   void *__restrict __arg) __THROWNL __nonnull ((1, 3));
+        
+        1. thread (sortie) : Pointeur vers l'identifiant du thread qui sera créé
+        2. attr (entrée) : Attributs du thread (NULL pour valeurs par défaut
+        3. start_routine : Fonction que le thread exécutera en premier
+        4. arg : Argument passé à la start_routine
+
+Traduction :
+"Crée un nouveau thread qui exécutera philo_routine avec comme argument &data->philos[i]
+(l'adresse du i-ème philosophe), et stocke son identifiant dans data->philos[i].thread"
+#endif
