@@ -119,34 +119,51 @@ Voici une comparaison et les nouveautés :
 
 #### 4. **Éviter les data races**
    - **Projets précédents** :
-     - Aucun projet n’avait de risque de **data races**, car ils étaient mono-thread ou utilisaient des processus indépendants.
+     - Aucun projet n’avait de risque de **data races**, car ils étaient mono-thread
+       ou utilisaient des processus indépendants.
+
    - **Philosophers** :
-     - Une **data race** survient quand plusieurs threads accèdent à une ressource partagée (ex. : une variable ou une fourchette) sans synchronisation, entraînant des comportements imprévisibles.
+     - Une **data race** survient quand plusieurs threads accèdent à une ressource partagée
+       (ex. : une variable ou une fourchette) sans synchronisation, entraînant des comportements imprévisibles.
+
      - Tu dois utiliser des mutexes pour protéger :
        - L’accès aux fourchettes.
        - L’affichage des messages (pour éviter que les logs se mélangent).
        - Les variables partagées (ex. : état de la simulation ou compteur de repas).
+
      - **Défi** : Identifier toutes les ressources partagées et les protéger correctement.
 
 #### 5. **Problème des philosophes dineurs**
+
    - **Projets précédents** :
-     - Les projets comme **push_swap** ou **so_long** impliquaient des algorithmes ou des simulations, mais sans concurrence.
+     - Les projets comme **push_swap** ou **so_long** impliquaient des algorithmes ou des simulations,
+       mais sans concurrence.
+
    - **Philosophers** :
-     - Ce projet est une implémentation du **problème des philosophes dineurs**, un problème classique en informatique pour étudier la synchronisation et éviter :
+     - Ce projet est une implémentation du **problème des philosophes dineurs**,
+       un problème classique en informatique pour étudier la synchronisation et éviter :
+
        - **Deadlock** : Tous les philosophes prennent une fourchette et attendent l’autre, bloquant la simulation.
        - **Starvation** : Un philosophe ne peut jamais manger (ex. : bloqué par ses voisins).
-     - **Défi** : Concevoir une stratégie pour que les philosophes mangent sans mourir, par exemple en imposant un ordre pour prendre les fourchettes (ex. : toujours prendre la fourchette de gauche d’abord) ou en limitant le nombre de philosophes mangeant simultanément.
+
+     - **Défi** : Concevoir une stratégie pour que les philosophes mangent sans mourir,
+       par exemple en imposant un ordre pour prendre les fourchettes (ex. : toujours prendre la fourchette de gauche d’abord)
+       ou en limitant le nombre de philosophes mangeant simultanément.
 
 #### 6. **Gestion des threads et terminaison propre**
+
    - **Projets précédents** :
      - Les projets se terminaient simplement en libérant la mémoire et en quittant.
+
    - **Philosophers** :
      - Tu dois gérer la **création**, l’**exécution** et la **terminaison** de plusieurs threads.
      - À la fin de la simulation (mort d’un philosophe ou repas complets), tu dois :
-       - Arrêter tous les threads proprement (souvent via `pthread_join` ou `pthread_detach`).
+=>     - Arrêter tous les threads proprement (souvent via `pthread_join` ou `pthread_detach`).
        - Libérer les mutexes avec `pthread_mutex_destroy`.
        - Libérer toute mémoire allouée.
-     - **Défi** : S’assurer que la simulation s’arrête immédiatement après une mort et que toutes les ressources sont libérées.
+
+     - **Défi** : S’assurer que la simulation s’arrête immédiatement après une mort
+                  et que toutes les ressources soient libérées.
 
 ---
 
@@ -170,8 +187,10 @@ Voici une comparaison et les nouveautés :
    - Vérifie régulièrement si un philosophe est mort dans un thread de supervision.
 
 4. **Éviter les problèmes classiques** :
-   - **Deadlock** : Fais prendre les fourchettes dans un ordre cohérent (ex. : fourchette avec l’index le plus bas en premier).
-   - **Starvation** : Assure que tous les philosophes ont une chance de manger (ex. : alterne les philosophes pairs/impairs).
+   - **Deadlock** : Fais prendre les fourchettes dans un ordre cohérent
+     (ex. : fourchette avec l’index le plus bas en premier).
+   - **Starvation** : Assure que tous les philosophes ont une chance de manger
+     (ex. : alterne les philosophes pairs/impairs).
    - **Précision temporelle** : Utilise `usleep` avec des boucles pour des temporisations précises.
 
 5. **Tester rigoureusement** :
@@ -207,7 +226,8 @@ Voici une comparaison et les nouveautés :
 ### Ressources utiles
 
 - **Documentation POSIX threads** : Lis les pages man de `pthread_create`, `pthread_mutex_lock`, etc.
-- **Problème des philosophes dineurs** : Recherche des explications sur ce problème classique (ex. : sur Wikipedia ou des cours d’informatique).
+- **Problème des philosophes dineurs** : Recherche des explications sur ce problème classique
+  (ex. : sur Wikipedia ou des cours d’informatique).
 - **Outils de débogage** :
   - `valgrind --tool=helgrind` pour détecter les data races.
   - `strace` pour suivre les appels système.
@@ -215,4 +235,14 @@ Voici une comparaison et les nouveautés :
 
 ---
 
-Si tu as des questions spécifiques sur une partie du projet (parsing, threads, mutexes, etc.), n’hésite pas à demander ! Bonne chance pour ton cercle et ce projet, c’est un beau défi qui te fera progresser en concurrence. 😊
+
+pthread_create : Crée un thread.
+pthread_join : Attend la fin d’un thread.
+pthread_detach : Permet à un thread de se libérer automatiquement à la fin.
+pthread_mutex_init : Initialise un mutex.
+pthread_mutex_lock : Verrouille un mutex (attend si déjà verrouillé).
+pthread_mutex_unlock : Déverrouille un mutex.
+pthread_mutex_destroy : Libère un mutex.
+gettimeofday
+pthread_join
+pthread_detach
