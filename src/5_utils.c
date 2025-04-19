@@ -6,7 +6,7 @@
 /*   By: grohr <grohr@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 18:48:58 by grohr             #+#    #+#             */
-/*   Updated: 2025/04/18 21:50:59 by grohr            ###   ########.fr       */
+/*   Updated: 2025/04/19 18:59:40 by grohr            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ long	get_time(void)
 //- Protège l'affichage avec log_mutex pour éviter les chevauchements.
 //- N'affiche rien si la simulation est arrêtée.
 //
-void	print_log(t_philo *philo, char *msg)
+void	print_msg(t_philo *philo, char *msg)
 {
 	long	timestamp;
 
@@ -59,15 +59,20 @@ void	precise_sleep(long ms)
 		usleep(100);
 }
 
-int	ft_atoi(char *str)
+int ft_atoi(char *str)
 {
-	long	res;
+    long res = 0;
 
-	res = 0;
-	while (*str >= '0' && *str <= '9')
+    while (*str == ' ' || (*str >= 9 && *str <= 13))
+        str++;
+    while (*str >= '0' && *str <= '9')
 	{
-		res = res * 10 + (*str - '0');
-		str++;
-	}
-	return (res);
+        res = res * 10 + (*str - '0');
+        str++;
+    }
+    if (*str != '\0')
+        return (-1);
+    if (res > 2147483647)
+        return (-1);
+    return ((int)res);
 }

@@ -6,7 +6,7 @@
 /*   By: grohr <grohr@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 18:48:56 by grohr             #+#    #+#             */
-/*   Updated: 2025/04/18 23:52:27 by grohr            ###   ########.fr       */
+/*   Updated: 2025/04/19 18:59:07 by grohr            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,9 @@ int	check_death(t_data *data, int i)
 	pthread_mutex_lock(&data->death_mutex);
 	if (get_time() - data->philos[i].last_meal > data->time_to_die)
 	{
+		print_msg(&data->philos[i], "died");
 		data->simulation_stop = 1;
 		pthread_mutex_unlock(&data->death_mutex);
-		print_msg(&data->philos[i], "died");
 		return (1);
 	}
 	pthread_mutex_unlock(&data->death_mutex);

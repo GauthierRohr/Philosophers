@@ -6,7 +6,7 @@
 /*   By: grohr <grohr@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 18:48:44 by grohr             #+#    #+#             */
-/*   Updated: 2025/04/18 23:09:41 by grohr            ###   ########.fr       */
+/*   Updated: 2025/04/19 18:57:47 by grohr            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,7 +125,7 @@ int	init_parse_args(int argc, char **argv, t_data *data)
 	data->max_meals = -1;
 	if (argc == 6)
 		data->max_meals = ft_atoi(argv[5]);
-	if (data->num_philos < 1
+	if (data->num_philos <= 0
 		|| data->time_to_die < 0
 		|| data->time_to_eat < 0
 		|| data->time_to_sleep < 0

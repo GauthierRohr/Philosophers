@@ -6,7 +6,7 @@
 /*   By: grohr <grohr@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 18:59:29 by grohr             #+#    #+#             */
-/*   Updated: 2025/04/18 21:27:31 by grohr            ###   ########.fr       */
+/*   Updated: 2025/04/19 15:59:07 by grohr            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@
 # include <pthread.h>
 # include <unistd.h>
 # include <sys/time.h>
+
+typedef struct s_data t_data;
 
 typedef struct s_philo
 {
@@ -66,7 +68,7 @@ int		check_all_ate(t_data *data);
 
 // utils.c
 long	get_time(void);
-void	print_log(t_philo *philo, char *msg);
+void	print_msg(t_philo *philo, char *msg);
 void	precise_sleep(long ms);
 int		ft_atoi(char *str);
 

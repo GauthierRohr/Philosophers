@@ -6,7 +6,7 @@
 /*   By: grohr <grohr@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 18:48:53 by grohr             #+#    #+#             */
-/*   Updated: 2025/04/19 15:00:59 by grohr            ###   ########.fr       */
+/*   Updated: 2025/04/19 19:20:26 by grohr            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,29 @@
 //- Attend le temps de repas (time_to_eat) et relâche les fourchettes.
 //- pthread_mutex_unlock libère les mutexes pour permettre à d'autres d'utiliser
 //  les fourchettes.
+//
+// Un mutex (mutual exclusion) est utilisé pour synchroniser l'accès
+// à des ressources partagées entre plusieurs threads.
+// Dans ce cas, last_meal et meals_eaten sont des ressources partagées, car :
+//		- Le thread du philosophe écrit dans ces variables
+//		- Le thread superviseur lit ces variables
+// Si ces accès ne sont pas protégés, il y a un risque de data race,
+// c'est-à-dire une situation où deux threads accèdent simultanément à la même variable
+// (l'un en écriture, l'autre en lecture), ce qui peut corrompre les données
+// ou produire des résultats incohérents.
+//
+// death_mutex est un verrou qui protège les sections de code modifiant ou
+// lisant last_meal et meals_eaten.
+// =>ne contient pas ces variables: empêche les threads d'y accéder en simultané
+//
+// ANALOGIE :
+// last_meal et meals_eaten sont comme un carnet partagé.
+// death_mutex est une clé qui verrouille le carnet.
+// Quand un thread (philosophe ou superviseur) veut écrire ou lire
+// dans le carnet, il doit prendre la clé (pthread_mutex_lock).
+// Tant qu'il a la clé, les autres doivent attendre.
+// Il rend la clé (pthread_mutex_unlock) après avoir fini.
+// La clé ne contient pas le carnet, mais elle contrôle qui peut y accéder.
 //
 void	eat(t_philo *philo)
 {
@@ -40,8 +63,17 @@ void	eat(t_philo *philo)
 //- pthread_mutex_lock verrouille un mutex, bloquant si fourchette déjà prise.
 //
 //
+//
 void	take_forks(t_philo *philo)
 {
+	if (philo->data->num_philos == 1)
+	{
+		pthread_mutex_lock(philo->left_fork);
+		print_msg(philo, "has taken a fork");
+		precise_sleep(philo->data->time_to_die);
+		pthread_mutex_unlock(philo->left_fork);
+		return ;
+	}
 	if (philo->id % 2)
 	{
 		pthread_mutex_lock(philo->left_fork);
@@ -72,18 +104,30 @@ void	*philo_routine(void *arg)
 	t_philo	*philo;
 
 	philo = (t_philo *)arg;
-	if (philo->id % 2 == 0)
+	if (philo->data->num_philos > 1 && philo->id % 2 == 0)
 		usleep(1000);
-	while (!philo->data->simulation_stop)
+	while (1)
 	{
-		take_forks(philo);
-		eat(philo);
-		if (philo->data->max_meals > 0
-			&& philo->meals_eaten >= philo->data->max_meals)
-			break ;
+        pthread_mutex_lock(&philo->data->death_mutex);
+        if (philo->data->simulation_stop)
+		{
+            pthread_mutex_unlock(&philo->data->death_mutex);
+            break;
+        }
+        pthread_mutex_unlock(&philo->data->death_mutex);
+        take_forks(philo);
+        if (philo->data->num_philos == 1)
+            break;
+        eat(philo);
+        if (philo->data->max_meals > 0 && philo->meals_eaten >= philo->data->max_meals)
+            break;
+        pthread_mutex_lock(&philo->data->death_mutex);
 		print_msg(philo, "is sleeping");
-		precise_sleep(philo->data->time_to_sleep);
-		print_msg(philo, "is thinking");
-	}
-	return (NULL);
+		pthread_mutex_unlock(&philo->data->death_mutex);
+        precise_sleep(philo->data->time_to_sleep);
+		pthread_mutex_lock(&philo->data->death_mutex);
+        print_msg(philo, "is thinking");
+		pthread_mutex_unlock(&philo->data->death_mutex);
+    }
+    return (NULL);
 }

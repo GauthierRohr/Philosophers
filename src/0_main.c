@@ -6,7 +6,7 @@
 /*   By: grohr <grohr@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 18:48:50 by grohr             #+#    #+#             */
-/*   Updated: 2025/04/18 22:24:46 by grohr            ###   ########.fr       */
+/*   Updated: 2025/04/19 19:10:36 by grohr            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,9 @@ int	main(int argc, char **argv)
 	if (!init_mutexes(&data) || !init_philos(&data))
 		return (printf("Initialization failed\n"), 1);
 	if (!create_threads(&data, &supervisor))
+	{
 		return (printf("Thread creation failed\n"), 1);
+	}
 	join_threads(&data, supervisor);
 	clean_up(&data);
 	return (0);
