@@ -159,4 +159,32 @@ extern int pthread_create
 Traduction :
 "Crée un nouveau thread qui exécutera philo_routine avec comme argument &data->philos[i]
 (l'adresse du i-ème philosophe), et stocke son identifiant dans data->philos[i].thread"
+
+----- [ pthread_create CHEAT SHEET ] -----
+
+Fonction:
+int pthread_create(pthread_t *thread,   // Stocke l'ID du thread
+                  const pthread_attr_t *attr,  // NULL par défaut
+                  void *(*start_routine)(void*),  // Fonction à exécuter
+                  void *arg);  // Argument passé à la fonction
+
+Points clés:
+1. Les threads partagent la mémoire du processus parent
+2. Chaque thread a sa propre pile d'exécution
+3. Les arguments doivent rester valides pendant l'exécution du thread
+4. Toujours vérifier la valeur de retour (0 = succès)
+
+Dans philo:
+- Crée 1 thread par philosophe + 1 superviseur
+- Chaque philosophe reçoit sa propre structure en argument
+- Le superviseur reçoit la structure data globale
+
+Gestion d'erreur:
+if (pthread_create(...) != 0) {
+    // Gérer l'échec de création
+}
+
+Nettoyage:
+- Toujours faire pthread_join() ou pthread_detach()
+- Ne pas oublier de détruire les mutex
 #endif

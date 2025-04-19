@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   supervisor.c                                       :+:      :+:    :+:   */
+/*   4_supervisor.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: grohr <grohr@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 18:48:56 by grohr             #+#    #+#             */
-/*   Updated: 2025/04/18 19:07:29 by grohr            ###   ########.fr       */
+/*   Updated: 2025/04/18 23:52:27 by grohr            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ int	check_death(t_data *data, int i)
 	{
 		data->simulation_stop = 1;
 		pthread_mutex_unlock(&data->death_mutex);
-		print_log(&data->philos[i], "died");
+		print_msg(&data->philos[i], "died");
 		return (1);
 	}
 	pthread_mutex_unlock(&data->death_mutex);
