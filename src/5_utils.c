@@ -6,7 +6,7 @@
 /*   By: grohr <grohr@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 18:48:58 by grohr             #+#    #+#             */
-/*   Updated: 2025/04/19 18:59:40 by grohr            ###   ########.fr       */
+/*   Updated: 2025/07/22 18:21:38 by grohr            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,17 +46,30 @@ void	print_msg(t_philo *philo, char *msg)
 }
 
 //precise_sleep:
-//- Attend un temps donné en millisecondes avec usleep.
-//- Utilise une boucle pour une précision accrue, car usleep seul peut être
-//  imprécis sur certains systèmes.
+//- Attend un temps donné en millisecondes avec plus de précision
+//- Utilise une approche hybride : sleep pour la majeure partie, puis boucle active
+//- Plus précis que l'ancienne version pour respecter les timings stricts
 //
 void	precise_sleep(long ms)
 {
 	long	start;
+	long	elapsed;
 
 	start = get_time();
-	while (get_time() - start < ms)
-		usleep(100);
+	
+	// Si le délai est long (>2ms), on peut utiliser usleep pour la majeure partie
+	if (ms > 2)
+	{
+		usleep((ms - 1) * 1000);  // Dormir ms-1 millisecondes
+	}
+	
+	// Boucle active pour la fin, pour plus de précision
+	while ((elapsed = get_time() - start) < ms)
+	{
+		if (ms - elapsed > 1)
+			usleep(100);  // Micro-pauses si on a encore du temps
+		// Sinon boucle active pure pour les dernières microsecondes
+	}
 }
 
 int ft_atoi(char *str)

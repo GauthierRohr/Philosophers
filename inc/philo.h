@@ -6,7 +6,7 @@
 /*   By: grohr <grohr@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 18:59:29 by grohr             #+#    #+#             */
-/*   Updated: 2025/04/19 15:59:07 by grohr            ###   ########.fr       */
+/*   Updated: 2025/07/22 16:44:42 by grohr            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,8 @@ typedef struct s_data
 	long			time_to_eat;
 	long			time_to_sleep;
 	int				max_meals;
+	//rajout
+	int				tot_finish_meal;
 	t_philo			*philos;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	log_mutex;
